@@ -4,12 +4,10 @@ var context = canvas.getContext('2d');
 canvas.width = 640;
 canvas.height = 480;
 
-var engine = new Engine(context);
+var engine = new Engine(canvas.width, canvas.height);
 engine.startGame();
 
-var onPaint = function(){
-	engine.draw();
-}
+
 
 
 
@@ -21,4 +19,12 @@ function requestAnimFrame() {
 	}
 }
 
-requestAnimFrame()(onPaint);
+var animationFunction = requestAnimFrame();
+
+var onPaint = function() {
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	engine.draw(context);
+
+	animationFunction(onPaint);
+}
+animationFunction(onPaint);

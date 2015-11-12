@@ -1,20 +1,46 @@
 var Engine = (function () {
-    function Engine(context) {
+    function Engine(viewportWidth, viewportHeight) {
         this.teams = [];
+        this.teamMembersCount = 5;
         this.context = context;
+        this.viewportWidth = viewportWidth;
+        this.viewportHeight = viewportHeight;
     }
     Engine.prototype.startGame = function () {
+        this.interface = new Interface();
         this.ground = new Ground();
         this.physics = new Physics(this.ground);
-        this.createTeams();
+        this.createTeams(1);
     };
-    Engine.prototype.createTeams = function () {
+    Engine.prototype.createTeams = function (count) {
+        this.teams = [];
+        for (var i = 0; i < count; i += 1) {
+            this.teams.push(this.createTeam());
+        }
     };
-    Engine.prototype.draw = function () {
+    Engine.prototype.createTeam = function () {
+        var teamAreaStart = new PositionPhysics();
+        teamAreaStart.x = 0;
+        teamAreaStart.y = 0;
+        var teamAreaEnd = new PositionPhysics();
+        teamAreaEnd.x = this.viewportWidth;
+        teamAreaEnd.y = this.viewportHeight;
+        var newTeam = new Team(teamAreaStart, teamAreaEnd, this.teamMembersCount);
+        newTeam.enablePhysics(this.physics);
+        return newTeam;
+    };
+    Engine.prototype.draw = function (context) {
         if (this.ground !== null &&
             this.physics != null) {
             this.physics.computeTick();
-            this.ground.draw(this.context);
+            this.ground.draw(context);
+            this.drawTeams(context);
+            this.interface.draw(context);
+        }
+    };
+    Engine.prototype.drawTeams = function (context) {
+        for (var i = 0; i < this.teams.length; i += 1) {
+            this.teams[i].draw(context);
         }
     };
     Engine.prototype.isGameStopped = function () {

@@ -5,13 +5,26 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Worm = (function (_super) {
     __extends(Worm, _super);
-    function Worm(position) {
+    function Worm(areaStart, areaEnd) {
         _super.call(this);
-        this.position = position;
+        this.spriteWidth = 20;
+        this.spriteHeight = 20;
+        this.position = new PositionPhysics();
+        this.position.x = this.getRandomInt(areaStart.x, areaEnd.x);
+        this.position.y = this.getRandomInt(areaStart.y, areaEnd.y);
         this.health = 100;
         this.angleDegrees = 0;
     }
-    Worm.prototype.draw = function () {
+    Worm.prototype.getRandomInt = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+    Worm.prototype.draw = function (context) {
+        var topLeftCornerX = this.position.x - this.spriteWidth / 2;
+        var topLeftCornerY = this.position.y - this.spriteHeight / 2;
+        context.beginPath();
+        context.rect(topLeftCornerX, topLeftCornerY, this.spriteWidth, this.spriteHeight);
+        context.closePath();
+        context.stroke();
     };
     Worm.prototype.move = function (newPosition) {
     };
